@@ -6,7 +6,8 @@
 # Date: November 15, 2021
 
 # Libraries                                                   
-import json                                                                  
+import json
+import math                                                                  
             
 class Scatter:
     def __init__(self,**kwargs):
@@ -108,10 +109,7 @@ class Scatter:
             self.showLines=Options["showLines"]
             self.layout.fromJson(JSONOBJ)
             self.legend.fromJson(JSONOBJ)
-            self.scales.fromJson(JSONOBJ)
-            
-            print("We out here :D")
-            
+            self.scales.fromJson(JSONOBJ)            
                     
         class Layout:
             def __init__(self):
@@ -186,3 +184,137 @@ class Scatter:
             self.channels=[]
             self.testname="IDK"
             
+class Histogram:
+    def __init__(self,**kwargs):
+        self.type="bar"
+        self.data=self.Data()
+        self.options=self.Options()
+        
+    def toJson(self):
+        ReturnJson=json.dumps(self, default=lambda o: o.__dict__)
+        return (ReturnJson)
+    
+    def fromJson(self, JSONOBJ):
+        JSONDATA=json.loads(JSONOBJ)
+        self.type=JSONDATA["type"]
+        self.options.fromJson(JSONOBJ)
+        self.data.fromJson(JSONOBJ)
+                
+    class Data:
+        def __init__(self,**kwargs):
+            self.datasets=[]#Array of Datasets
+            self.labels=[]
+               
+        def AddDataSet(self,xdata,color,label):
+            # Get the data we need for the dataset
+            Histo=HistogramProcessor(xdata)
+            [newlabels, newdata,newcolors]=Histo.ReturnData(color)
+            #This functions wants the x and y values as arrays!
+            NewDataset=self.Datasets()
+            NewDataset.label=str(label)
+            self.labels=newlabels
+            NewDataset.backgroundColor=newcolors
+            NewDataset.data=newdata
+            self.datasets.append(NewDataset)
+            
+        class Datasets:
+            def __init__(self, backgroundColor="blue", label="Label"):
+                self.backgroundColor=backgroundColor
+                self.label=label
+                self.data=[]#Array of points
+                                   
+            
+    class Options:
+        def __init__(self):
+            self.legend=self.Legend()
+            self.scales=self.Scales()
+            
+        def fromJson(self, JSONOBJ):
+            JSONDATA=json.loads(JSONOBJ)
+            Options=JSONDATA["options"]
+            self.legend.fromJson(JSONOBJ)
+            self.scales.fromJson(JSONOBJ)
+                               
+        class Legend:
+            def __init__(self):
+                self.display="false"
+                
+            def fromJson(self, JSONOBJ):
+                JSONDATA=json.loads(JSONOBJ)
+                Legend=JSONDATA["options"]["legend"]
+                self.display=Legend["display"]
+                
+        class Scales:
+            def __init__(self):
+                self.xAxes=[self.XAxes()]
+                
+            def fromJson(self, JSONOBJ):
+                JSONDATA=json.loads(JSONOBJ)
+                Scales=JSONDATA["options"]["scales"]
+                self.xAxes[0].fromJson(JSONOBJ)
+                
+            class XAxes:
+                def __init__(self):
+                    self.categoryPercentage=1.0
+                    self.barPercentage=1.0
+                    
+                def fromJson(self, JSONOBJ):
+                    JSONDATA=json.loads(JSONOBJ)
+                    xAxes=JSONDATA["options"]["scales"]["xAxes"][0]
+                    self.categoryPercentage=xAxes["categoryPercentage"]
+                    self.barPercentage=xAxes["barPercentage"]
+                     
+
+class HistogramProcessor:
+    def __init__(self,values):
+        self.values=values.copy()
+        self.values.sort()
+        self.FindBins()
+        self.FindSpacing()
+        self.MakeBins()
+        self.PlaceIntoBins()
+
+    def FindBins(self):
+        self.NumberofBins=int(math.log(len(self.values),(2))+1)
+
+    def FindSpacing(self):
+        self.Spacing=(max(self.values)-min(self.values))/self.NumberofBins
+    
+    def MakeBins(self):
+        Bins=[]
+        FirstValue=min(self.values)
+        for i in range(0,self.NumberofBins):
+            Binny=self.Bin(FirstValue,FirstValue+self.Spacing)
+            Bins.append(Binny)
+            FirstValue=FirstValue+self.Spacing
+
+        self.Bins=Bins
+
+    # slightly slopy way of making bins
+    def PlaceIntoBins(self):
+        BinNumber=0
+        for value in self.values:
+            while (BinNumber<self.NumberofBins):
+                if (value >= self.Bins[BinNumber].Low) and (value <= self.Bins[BinNumber].High):
+                    self.Bins[BinNumber].NumberofValues=self.Bins[BinNumber].NumberofValues+1
+                    break
+                BinNumber=BinNumber+1
+
+    def ReturnData(self,color):
+        Labels=[]
+        Values=[]
+        Colors=[]
+        for bi in self.Bins:
+            Labels.append(bi.Label)
+            Values.append(bi.NumberofValues)
+            Colors.append(color)
+        return([Labels,Values,Colors])
+    
+    class Bin:
+        def __init__(self,low,high):
+            self.Low=low
+            self.High=high
+            self.NumberofValues=0
+            #self.Label=str(low)+"-"+str(high)
+            self.Label=f'{low:.2f} to {high:.2f}'
+
