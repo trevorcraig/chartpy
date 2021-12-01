@@ -8,3 +8,6 @@ An example of how to do it is attached with the app.
 
 To run it all you need to do is install and run 
 "flask run"
+
+FUTRUE PLANS
+I plan on adding more chart options other than the scatter plot. Feel free to add your own favorite charts.
