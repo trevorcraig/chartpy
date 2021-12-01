@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script type="text/javascript" src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+
+<html lang="en">
+	<title>Example of Graphs</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-type" content="text/html">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<body>
+		<canvas id="myChart"></canvas>
+		{% block javascript %}
+			<script type="text/javascript">
+				data = {{ChartObj.toJson()|safe}};//COuld make this a window object
+				window.myLineChart3 =new Chart(document.getElementById("myChart"),data);
+			</script>
+		{% endblock %}
+
+	</body>
+</html>
