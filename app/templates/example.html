@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <script type="text/javascript" src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+<link rel="shortcut icon" href="#" />
 
 <html lang="en">
 	<title>Example of Graphs</title>
@@ -9,10 +10,15 @@
 
 	<body>
 		<canvas id="myChart"></canvas>
+		<canvas id="myChart2"></canvas>
 		{% block javascript %}
 			<script type="text/javascript">
 				data = {{ChartObj.toJson()|safe}};//COuld make this a window object
 				window.myLineChart3 =new Chart(document.getElementById("myChart"),data);
+			</script>
+			<script type="text/javascript">
+				data = {{ChartObj2.toJson()|safe}};//COuld make this a window object
+				window.myLineChart3 =new Chart(document.getElementById("myChart2"),data);
 			</script>
 		{% endblock %}
 
