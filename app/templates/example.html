@@ -11,6 +11,7 @@
 	<body>
 		<canvas id="myChart"></canvas>
 		<canvas id="myChart2"></canvas>
+		<canvas id="myChart3"></canvas>
 		{% block javascript %}
 			<script type="text/javascript">
 				data = {{ChartObj.toJson()|safe}};//COuld make this a window object
@@ -19,6 +20,11 @@
 			<script type="text/javascript">
 				data = {{ChartObj2.toJson()|safe}};//COuld make this a window object
 				window.myLineChart3 =new Chart(document.getElementById("myChart2"),data);
+			</script>
+
+			<script type="text/javascript">
+				data = {{ChartObj3.toJson()|safe}};//COuld make this a window object
+				window.myLineChart3 =new Chart(document.getElementById("myChart3"),data);
 			</script>
 		{% endblock %}
 

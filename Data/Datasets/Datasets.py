@@ -4,6 +4,8 @@ class Datasets:
         self.pointRadius=pointRadius
         self.pointHoverRadius=pointHoverRadius
         self.backgroundColor=pointBackgroundColor
+        self.borderColor=pointBackgroundColor
         self.label=label
         self.hidden=False
+        self.fill=False
         self.data=[]#Array of datapoints
