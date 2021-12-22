@@ -44,8 +44,9 @@ A simple Line Chart example.
         return render_template('example.html', ChartObj=ScatChart)
 
 3. Get a Chart.js Line Chart
+.. image:: https://raw.github.com/trevorcraig/chartpy/master/docs/linechart.png
 
-Going to place an image here 
+
 
 The only file you need to is chartpy.py. This file sets up all of the things necessary to create the json format that chart.js uses to make the actual chart. 
 I find this much more convient than using the javascript.
